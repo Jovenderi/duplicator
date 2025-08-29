@@ -1,0 +1,2 @@
+# duplicator
+duplicate multiple file
