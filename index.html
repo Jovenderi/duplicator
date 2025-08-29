@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>File Duplicator</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 350px;
+    text-align: center;
+  }
+  h2 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #333;
+  }
+  label {
+    display: block;
+    text-align: left;
+    margin: 10px 0 5px;
+    font-size: 14px;
+    color: #555;
+  }
+  input[type="number"], input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+  button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #4f86f7;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #3c6ee0;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h2>File Duplicator</h2>
+    <label>Start number:</label>
+    <input type="number" id="startNumber" placeholder="e.g. 1">
+
+    <label>End number:</label>
+    <input type="number" id="endNumber" placeholder="e.g. 5">
+
+    <label>Upload file:</label>
+    <input type="file" id="uploadFile">
+
+    <button onclick="duplicateFile()">Duplicate</button>
+  </div>
+
+<script>
+async function duplicateFile() {
+  const start = parseInt(document.getElementById('startNumber').value);
+  const end = parseInt(document.getElementById('endNumber').value);
+  const fileInput = document.getElementById('uploadFile');
+  const file = fileInput.files[0];
+
+  if (!file) { alert("Please upload a file!"); return; }
+  if (isNaN(start) || isNaN(end)) { alert("Enter valid numbers!"); return; }
+  if (start > end) { alert("Start should be <= End!"); return; }
+
+  const arrayBuffer = await file.arrayBuffer();
+  const total = end - start + 1;
+  const padLength = String(end).length > 3 ? String(end).length : 3; // at least 3 digits
+
+  function buildName(orig, n) {
+    const dot = orig.lastIndexOf('.');
+    const num = String(n).padStart(padLength, '0'); 
+    if (dot === -1) return orig + "-" + num;
+    return orig.substring(0, dot) + "-" + num + orig.substring(dot);
+  }
+
+  for (let i = start; i <= end; i++) {
+    const newFileName = buildName(file.name, i);
+    const blob = new Blob([arrayBuffer], { type: file.type || "application/octet-stream" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = newFileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+}
+</script>
+</body>
+</html>
