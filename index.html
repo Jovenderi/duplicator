@@ -89,8 +89,8 @@ async function duplicateFile() {
   function buildName(orig, n) {
     const dot = orig.lastIndexOf('.');
     const num = String(n).padStart(padLength, '0'); 
-    if (dot === -1) return orig + "-" + num;
-    return orig.substring(0, dot) + "-" + num + orig.substring(dot);
+    if (dot === -1) return orig + "_" + num;
+    return orig.substring(0, dot) + "_" + num + orig.substring(dot);
   }
 
   for (let i = start; i <= end; i++) {
